@@ -1,11 +1,28 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './login.css';
 
 const Login: React.FC = () => {
 
     const [showRegister, setShowRegister] = useState<boolean>(false);
     const [showForgot, setShowForgot] = useState<boolean>(false);
+    const [moveToDashboard, setMoveToDashboard] = useState<boolean>(false);
     
+    const navigate = useNavigate();
+
+    const handleLogin = () => {
+        // Optionally do validation here
+
+        // Show the success overlay
+        setMoveToDashboard(true);
+
+        // After 1.5 seconds, hide overlay and navigate
+        setTimeout(() => {
+            setMoveToDashboard(false);
+            navigate("/dashboard");
+        }, 1500);
+    };
+
     return (
         <div className="login-page">
             <h1 id="title">Inventory Manager</h1>
@@ -19,7 +36,7 @@ const Login: React.FC = () => {
                     <br />
                     <input type="password" id="password" placeholder="Password" />
                     <br />
-                    <button type="button" id='login-button'>Log-in</button>
+                    <button type="button" id='login-button' onClick={handleLogin}>Log-in</button>
                 </form>
 
                 <div className='modalbuttons'>
@@ -65,6 +82,17 @@ const Login: React.FC = () => {
             </div>
             )
         }
+
+        {moveToDashboard && (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    <h2>Login Successful!</h2>
+                    <p>Redirecting to dashboard...</p>
+                </div>
+            </div>
+            )
+        }
+
         </div>
     );
 }

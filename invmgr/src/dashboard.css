@@ -1,42 +1,101 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.dashboard-page {
+  display: flex;
+  flex-direction: column;   /* stack children vertically */
+  font-family: Arial, sans-serif;
+  background-color: #f9fafb;
+  height: 100vh;
+  width: 100vw;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* ===== TOP BAR ===== */
+.dashboard-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: #3B82F6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  font-size: 16px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Group buttons properly */
+.buttongroup {
+  display: flex;
+  gap: 15px;
 }
 
-.card {
-  padding: 2em;
+#profile-button {
+  background-color: white;
+  margin: 30px ;
+  max-width: 100px;
+  color: #3B82F6;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s; /* smooth hover effect */
+}
+#profile-button:hover {
+  background-color: #60A5FA;
+  color: white;
 }
 
-.read-the-docs {
-  color: #888;
+#logout-button{
+   /* pushes the button to the right */
+  background-color: white;
+  margin: 30px ;
+  max-width: 100px;
+  color: #3B82F6;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s; /* smooth hover effect */
+}
+
+#logout-button:hover {
+  background-color: #60A5FA;
+  color: white;
+}
+
+.dashboard-body {
+  display: flex;
+  margin-top: 80px; /* push below fixed top bar */
+  flex: 1;
+}
+
+/* ===== BELOW TOP BAR CONTAINER ===== */
+.dashboard-navbar {
+  width: 250px;
+  background-color: lightgrey;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.nav-button {
+  margin-bottom: 15px;
+  padding: 20px;
+  border: none;
+  border-bottom: 1px solid #d1d5db;
+  border-top: 1px solid #d1d5db;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 90%;
+}
+
+.nav-button:hover {
+  background-color: #d1d5db;
+}
+
+/* ===== CONTENT AREA ===== */
+.dashboard-content {
+  padding: 20px;
+  flex: 1;
 }
