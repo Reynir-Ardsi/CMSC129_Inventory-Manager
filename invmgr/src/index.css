@@ -1,68 +1,195 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
   margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(150deg, #1a365d, #1D4ED8, #3B82F6, #60A5FA);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 85vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+#title {
+  color: white;
+  margin-bottom: 50px;
+  text-align: center;
+  font-size: 45px;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.login-container {
+  background-color: white;
+  width: 1000px;
+  height: 500px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  overflow: hidden;
+}
+
+.login-left {
+  flex: 1;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-right {
+  flex: 1;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.login-right img {
+  width: 95%;
+  height: auto;
+  border-radius: 10px;
+}
+
+#container-label{
+  color: black;
+  margin-bottom: 50px;
+  text-align: center;
+  font-size: 40px;
+}
+
+form{
+  text-align: center;
+  color: black;
+}
+
+input{
+  padding: 20px;
+  width: 350px;
+  margin-bottom: 30px;
+  border-radius: 6px;
+  border: 0px;
+  background: rgb(231, 231, 231);
+  font-size: 20px;
+  transition: 0.2s ease;;
+}
+
+input::placeholder{
+  color: grey;
+}
+
+button{
+  margin: 10px;
+  padding: 20px;
+  width: 300px;
+  background-color: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 20px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: background-color 0.2s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+input:hover {
+  background-color: lightgrey;
+}
+
+#login-button:hover {
+  background-color: #2563EB;
+}
+
+#forgot-pass{
+  width: 140px;
+  height: 30px;
+  padding: 5px;
+  margin-left: 52px;
+  text-decoration: none;
+  font-size: 16px;
+  justify-content: center;
+  background-color: white;
+  color: lightgray;
+}
+
+#register{
+  width: 70px;
+  height: 30px;
+  padding: 5px;
+  margin-left: 175px;
+  text-decoration: none;
+  font-size: 16px;
+  justify-content: right;
+  background-color: white;
+  color: lightgray;
+
+}
+
+#register:hover, #forgot-pass:hover {
+  color: #3B82F6;
+}
+
+/* Modal Styles */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  width: 400px;
+  animation: fadeIn 0.3s ease;
+}
+
+#register-button {
+  background-color: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  padding: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#reset-button {
+  background-color: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  padding: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#reset-button:hover, #register-button:hover {
+  background-color: #2563EB;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
+
+
