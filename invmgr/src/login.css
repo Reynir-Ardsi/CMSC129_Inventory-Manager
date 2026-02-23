@@ -21,8 +21,8 @@ body {
 
 .login-container {
   background-color: white;
-  width: 1000px;
-  height: 500px;
+  width: 800px;
+  height: 400px;
   border-radius: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   display: flex;
@@ -31,10 +31,132 @@ body {
 
 .login-left {
   flex: 1;
-  padding: 0px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+#container-label{
+  color: black;
+  margin-bottom: 50px;
+  text-align: center;
+  font-size: 30px;
+}
+
+form{
+  align-items: center;
+  text-align: center;
   justify-content: center;
+  color: black;
+}
+
+#login-form{
+  margin-left: 25px;
+  margin-top: 0px;
+}
+
+input{
+  padding: 20px;
+  width: 300px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 0px;
+  background: rgb(231, 231, 231);
+  font-size: 20px;
+  transition: 0.2s ease;;
+}
+
+input::placeholder{
+  color: grey;
+}
+
+input:hover {
+  background-color: lightgrey;
+}
+
+#login-button{
+  margin: 10px;
+  padding: 15px;
+  width: 300px;
+  background-color: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#login-button:hover {
+  background-color: #2563EB;
+}
+
+.modalbuttons {
+  display: flex;
+  justify-content: space-between;
+  width: 85%;
+  margin-left: 25px;
+  background-color: white;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 20px;
+
+}
+
+#forgot-pass{
+  margin-right: 30px;
+  padding: 5px;
+  background-color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#register{
+  margin-left: 50px;
+  padding: 5px;
+  background-color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#forgot-pass, #register {
+  color: lightgrey;
+}
+
+/* #forgot-pass{
+  width: 140px;
+  height: 30px;
+  padding: 5px;
+  margin-left: 52px;
+  text-decoration: none;
+  font-size: 16px;
+  justify-content: left;
+  background-color: lightgrey;
+  color: lightgray;
+}
+
+#register{
+  width: 70px;
+  height: 30px;
+  padding: 5px;
+  margin-left: 175px;
+  text-decoration: none;
+  font-size: 14px;
+  justify-content: right;
+  background-color: lightgray;
+  color: lightgray;
+
+} */
+
+#register:hover, #forgot-pass:hover {
+  color: #3B82F6;
 }
 
 .login-right {
@@ -47,86 +169,9 @@ body {
 }
 
 .login-right img {
-  width: 95%;
+  width: 94%;
   height: auto;
   border-radius: 10px;
-}
-
-#container-label{
-  color: black;
-  margin-bottom: 50px;
-  text-align: center;
-  font-size: 40px;
-}
-
-form{
-  text-align: center;
-  color: black;
-}
-
-input{
-  padding: 20px;
-  width: 350px;
-  margin-bottom: 30px;
-  border-radius: 6px;
-  border: 0px;
-  background: rgb(231, 231, 231);
-  font-size: 20px;
-  transition: 0.2s ease;;
-}
-
-input::placeholder{
-  color: grey;
-}
-
-button{
-  margin: 10px;
-  padding: 20px;
-  width: 300px;
-  background-color: #3B82F6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 20px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-input:hover {
-  background-color: lightgrey;
-}
-
-#login-button:hover {
-  background-color: #2563EB;
-}
-
-#forgot-pass{
-  width: 140px;
-  height: 30px;
-  padding: 5px;
-  margin-left: 52px;
-  text-decoration: none;
-  font-size: 16px;
-  justify-content: center;
-  background-color: white;
-  color: lightgray;
-}
-
-#register{
-  width: 70px;
-  height: 30px;
-  padding: 5px;
-  margin-left: 175px;
-  text-decoration: none;
-  font-size: 16px;
-  justify-content: right;
-  background-color: white;
-  color: lightgray;
-
-}
-
-#register:hover, #forgot-pass:hover {
-  color: #3B82F6;
 }
 
 /* Modal Styles */

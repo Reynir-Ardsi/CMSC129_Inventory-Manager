@@ -30,8 +30,8 @@ const Login: React.FC = () => {
             <div className="login-container">
 
             <div className="login-left">
-                <h1 id="container-label">Welcome</h1>
-                <form>
+                <h1 id="container-label">Sign In</h1>
+                <form id='login-form'>
                     <input type="text" id="username" placeholder="Username" />
                     <br />
                     <input type="password" id="password" placeholder="Password" />
