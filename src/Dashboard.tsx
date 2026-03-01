@@ -7,10 +7,6 @@ const Dashboard: React.FC = () => {
             {/* Top Bar */}
             <div className="dashboard-bar">
                 <h1 id='header'>Dashboard</h1>
-                {/* <div className='buttongroup'>
-                    <button id="profile-button">Profile</button>
-                    <button id="logout-button">Log-out</button>
-                </div> */}
             </div>
 
             {/* Body Area */}
@@ -18,12 +14,11 @@ const Dashboard: React.FC = () => {
                 <div className="dashboard-navbar">
                     <div className="dashboard-buttons">
                         <button className="nav-button">Inventory</button>
-                        <button className="nav-button">Orders</button>
-                        <button className="nav-button">Suppliers</button>
-                        <button className="nav-button">Reports</button>
+                        <button className="nav-button">Transactions</button>
+
                     </div>
                     <div>
-                        <button className="profile-button">Settings</button>
+                        <button className="profile-button">Rainier RJ Espinal</button>
                     </div>
                 </div>
                 <div className="dashboard-content">
