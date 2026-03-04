@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import './inventory.css';
-import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiRefreshCcw } from "react-icons/fi";
+import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiRefreshCcw, FiAlertOctagon } from "react-icons/fi";
 
+// Define the Item type expected from the database
 interface Item {
     id: string;
     name: string;
@@ -13,6 +14,7 @@ interface Item {
 const API_URL = 'http://localhost:5000/api/inventory';
 
 const Inventory: React.FC = () => {
+    // --- BACKEND LOGIC STATES ---
     const [items, setItems] = useState<Item[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({ id: '', name: '', category: 'Electronics', quantity: 0, price: 0 });
@@ -21,7 +23,9 @@ const Inventory: React.FC = () => {
     // Toggle between Active inventory and Soft-Deleted items
     const [viewMode, setViewMode] = useState<'active' | 'deleted'>('active');
 
-    // Fetch items based on view mode
+    // --- CRUD OPERATIONS ---
+    
+    // READ: Fetch Items from the server (handles both active and soft-deleted)
     const fetchItems = async () => {
         try {
             const query = viewMode === 'deleted' ? '?deleted=true' : '';
@@ -37,16 +41,19 @@ const Inventory: React.FC = () => {
         fetchItems();
     }, [viewMode]);
 
+    // CREATE / UPDATE: Submit form data to server
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             if (isEditing) {
+                // UPDATE request
                 await fetch(`${API_URL}/${formData.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
             } else {
+                // CREATE request
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -54,31 +61,51 @@ const Inventory: React.FC = () => {
                 });
             }
             setIsModalOpen(false);
-            fetchItems(); 
+            fetchItems(); // Refresh the list from the database
         } catch (error) {
             console.error("Error saving item:", error);
         }
     };
 
+    // SOFT DELETE: Send soft-delete request to server
     const handleSoftDelete = async (id: string) => {
         if (!window.confirm("Move this item to the recycle bin?")) return;
         try {
-            await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-            fetchItems();
+            await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+            });
+            fetchItems(); // Refresh the list
         } catch (error) {
             console.error("Error deleting item:", error);
         }
     };
 
+    // RESTORE: Recover a soft-deleted item
     const handleRestore = async (id: string) => {
         try {
-            await fetch(`${API_URL}/${id}/restore`, { method: 'PUT' });
+            await fetch(`${API_URL}/${id}/restore`, { 
+                method: 'PUT' 
+            });
             fetchItems();
         } catch (error) {
             console.error("Error restoring item:", error);
         }
     };
 
+    // HARD DELETE: Permanently remove item from the database
+    const handleHardDelete = async (id: string) => {
+        if (!window.confirm("WARNING: This will permanently delete the item. Continue?")) return;
+        try {
+            await fetch(`${API_URL}/${id}/hard`, { 
+                method: 'DELETE' 
+            });
+            fetchItems(); // Refresh the list
+        } catch (error) {
+            console.error("Error hard deleting item:", error);
+        }
+    };
+
+    // --- MODAL CONTROLS ---
     const openEditModal = (item: Item) => {
         setFormData(item);
         setIsEditing(true);
@@ -103,6 +130,11 @@ const Inventory: React.FC = () => {
                     <select className="sort-button">
                         <option value="All">All Categories</option>
                         <option value="Electronics">Electronics</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Food">Food</option>
+                        <option value="Health&Beauty">Health&Beauty</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="School Supplies">School Supplies</option>
                     </select>
 
                     <button 
@@ -112,12 +144,14 @@ const Inventory: React.FC = () => {
                     </button>
                 </div>
 
+                {/* Only show Add button in active view */}
                 {viewMode === 'active' && <button id="additem" onClick={openAddModal}><FiPlus /></button>}
             </div>
 
             <div id="invbottom">
                 <div className='content-container' style={{ padding: '20px', overflowY: 'auto' }}>
                     <h2 style={{marginTop: 0}}>{viewMode === 'active' ? 'Active Inventory' : 'Recycle Bin'}</h2>
+                    
                     <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden' }}>
                         <thead style={{ backgroundColor: '#f4f4f4', borderBottom: '2px solid #ddd' }}>
                             <tr>
@@ -142,10 +176,13 @@ const Inventory: React.FC = () => {
                                             {viewMode === 'active' ? (
                                                 <>
                                                     <button onClick={() => openEditModal(item)} style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#007bff' }}><FiEdit2 size={18} /></button>
-                                                    <button onClick={() => handleSoftDelete(item.id)} style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'orange' }}><FiTrash2 size={18} /></button>
+                                                    <button onClick={() => handleSoftDelete(item.id)} title="Send to Recycle Bin" style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'orange' }}><FiTrash2 size={18} /></button>
                                                 </>
                                             ) : (
-                                                <button onClick={() => handleRestore(item.id)} title="Restore" style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'green' }}><FiRefreshCcw size={18} /></button>
+                                                <>
+                                                    <button onClick={() => handleRestore(item.id)} title="Restore" style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'green' }}><FiRefreshCcw size={18} /></button>
+                                                    <button onClick={() => handleHardDelete(item.id)} title="Permanent Delete" style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'red' }}><FiAlertOctagon size={18} /></button>
+                                                </>
                                             )}
                                         </td>
                                     </tr>
@@ -153,34 +190,43 @@ const Inventory: React.FC = () => {
                             )}
                         </tbody>
                     </table>
+
                 </div>
             </div>
 
-            {/* Modal code remains exactly the same as before */}
+            {/* MODAL FOR ADD/EDIT */}
             {isModalOpen && (
-                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-                 <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', width: '400px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                     <h2 style={{ margin: 0 }}>{isEditing ? "Edit Item" : "Add New Item"}</h2>
-                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                         <input type="text" placeholder="Item Name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-                         <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}>
-                             <option value="Electronics">Electronics</option>
-                             <option value="Sports">Sports</option>
-                             <option value="Food">Food</option>
-                         </select>
-                         <input type="number" placeholder="Quantity" required value={formData.quantity} onChange={e => setFormData({...formData, quantity: Number(e.target.value)})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-                         <input type="number" placeholder="Price" step="0.01" required value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-                         <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                             <button type="submit" style={{ flex: 1, padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                                 {isEditing ? "Update Item" : "Save Item"}
-                             </button>
-                             <button type="button" onClick={() => setIsModalOpen(false)} style={{ flex: 1, padding: '10px', backgroundColor: '#ccc', color: 'black', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-                                 Cancel
-                             </button>
-                         </div>
-                     </form>
-                 </div>
-             </div>
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', width: '400px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        <h2 style={{ margin: 0 }}>{isEditing ? "Edit Item" : "Add New Item"}</h2>
+                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            
+                            <input type="text" placeholder="Item Name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                            
+                            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Food">Food</option>
+                                <option value="Health&Beauty">Health&Beauty</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="School Supplies">School Supplies</option>
+                            </select>
+                            
+                            <input type="number" placeholder="Quantity" required value={formData.quantity} onChange={e => setFormData({...formData, quantity: Number(e.target.value)})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                            
+                            <input type="number" placeholder="Price" step="0.01" required value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                            
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                                <button type="submit" style={{ flex: 1, padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                                    {isEditing ? "Update Item" : "Save Item"}
+                                </button>
+                                <button type="button" onClick={() => setIsModalOpen(false)} style={{ flex: 1, padding: '10px', backgroundColor: '#ccc', color: 'black', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             )}
         </div>
     );
