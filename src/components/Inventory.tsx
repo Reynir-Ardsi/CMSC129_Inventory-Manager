@@ -17,7 +17,7 @@ const Inventory: React.FC = () => {
     // --- BACKEND LOGIC STATES ---
     const [items, setItems] = useState<Item[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [formData, setFormData] = useState({ id: '', name: '', category: 'Electronics', quantity: 0, price: 0 });
+    const [formData, setFormData] = useState({ id: '', name: '', category: 'Electronics', quantity: '', price: '' });
     const [isEditing, setIsEditing] = useState(false);
     
     // Toggle between Active inventory and Soft-Deleted items
@@ -44,26 +44,33 @@ const Inventory: React.FC = () => {
     // CREATE / UPDATE: Submit form data to server
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
         try {
+            const payload = {
+                ...formData,
+                quantity: formData.quantity,
+                price: parseFloat(formData.price)
+            };
+
             if (isEditing) {
-                // UPDATE request
                 await fetch(`${API_URL}/${formData.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(payload)
                 });
             } else {
-                // CREATE request
                 await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: JSON.stringify(payload)
                 });
             }
+
             setIsModalOpen(false);
-            fetchItems(); // Refresh the list from the database
+            fetchItems();
+
         } catch (error) {
-            console.error("Error saving item:", error);
+            console.error(error);
         }
     };
 
@@ -96,8 +103,8 @@ const Inventory: React.FC = () => {
     const handleHardDelete = async (id: string) => {
         if (!window.confirm("WARNING: This will permanently delete the item. Continue?")) return;
         try {
-            await fetch(`${API_URL}/${id}/hard`, { 
-                method: 'DELETE' 
+            await fetch(`${API_URL}/${id}/hard`, {
+                method: 'DELETE'
             });
             fetchItems(); // Refresh the list
         } catch (error) {
@@ -107,20 +114,26 @@ const Inventory: React.FC = () => {
 
     // --- MODAL CONTROLS ---
     const openEditModal = (item: Item) => {
-        setFormData(item);
+        setFormData({
+            id: item.id,
+            name: item.name,
+            category: item.category,
+            quantity: item.quantity.toString(),
+            price: item.price.toString()
+        });
         setIsEditing(true);
         setIsModalOpen(true);
     };
 
     const openAddModal = () => {
-        setFormData({ id: '', name: '', category: 'Electronics', quantity: 0, price: 0 });
+        setFormData({ id: '', name: '', category: 'Electronics', quantity: '', price: '' });
         setIsEditing(false);
         setIsModalOpen(true);
     };
 
     return(
         <div>
-            <div id="invtop" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <div id="invtop">
                 <div className='nav-wrapper' style={{ display: 'flex', gap: '15px' }}>
                     <div className="search-wrapper">
                         <input id="search-bar" placeholder="Search"/>
@@ -135,11 +148,22 @@ const Inventory: React.FC = () => {
                         <option value="Health&Beauty">Health&Beauty</option>
                         <option value="Clothing">Clothing</option>
                         <option value="School Supplies">School Supplies</option>
+                        <option value="Pet Care">Pet Care</option>
                     </select>
 
-                    <button 
-                        onClick={() => setViewMode(viewMode === 'active' ? 'deleted' : 'active')}
-                        style={{ padding: '10px', backgroundColor: viewMode === 'active' ? '#ff4d4f' : '#28a745', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                    <select className="sort-button">
+                        <option value="default">Default Sort</option>
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="quantity-asc">Quantity (Low to High)</option>
+                        <option value="quantity-desc">Quantity (High to Low)</option>
+                        <option value="price-asc">Price (Low to High)</option>
+                        <option value="price-desc">Price (High to Low)</option>
+                    </select>
+
+
+                    <button id={viewMode === 'active' ? 'recycle-active' : 'recycle-deleted'}
+                        onClick={() => setViewMode(viewMode === 'active' ? 'deleted' : 'active')}>
                         {viewMode === 'active' ? 'View Recycle Bin' : 'View Active Inventory'}
                     </button>
                 </div>
@@ -149,30 +173,28 @@ const Inventory: React.FC = () => {
             </div>
 
             <div id="invbottom">
-                <div className='content-container' style={{ padding: '20px', overflowY: 'auto' }}>
-                    <h2 style={{marginTop: 0}}>{viewMode === 'active' ? 'Active Inventory' : 'Recycle Bin'}</h2>
-                    
-                    <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '8px', overflow: 'hidden' }}>
-                        <thead style={{ backgroundColor: '#f4f4f4', borderBottom: '2px solid #ddd' }}>
+                <div className='content-container'>
+                    <table id='inv-table'>
+                        <thead id="table-header-group">
                             <tr>
-                                <th style={{ padding: '12px' }}>Name</th>
-                                <th style={{ padding: '12px' }}>Category</th>
-                                <th style={{ padding: '12px' }}>Quantity</th>
-                                <th style={{ padding: '12px' }}>Price</th>
-                                <th style={{ padding: '12px' }}>Actions</th>
+                                <th id='table-headers'>Name</th>
+                                <th id='table-headers'>Category</th>
+                                <th id='table-headers'>Quantity</th>
+                                <th id='table-headers'>Price</th>
+                                <th id='table-headers'>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {items.length === 0 ? (
-                                <tr><td colSpan={5} style={{ padding: '20px', textAlign: 'center', color: '#666' }}>No items found.</td></tr>
+                                <tr><td id='td' colSpan={5}>No items found.</td></tr>
                             ) : (
                                 items.map((item) => (
                                     <tr key={item.id} style={{ borderBottom: '1px solid #eee' }}>
-                                        <td style={{ padding: '12px' }}>{item.name}</td>
-                                        <td style={{ padding: '12px' }}>{item.category}</td>
-                                        <td style={{ padding: '12px' }}>{item.quantity}</td>
-                                        <td style={{ padding: '12px' }}>${item.price}</td>
-                                        <td style={{ padding: '12px', display: 'flex', gap: '10px' }}>
+                                        <td id='item-display'>{item.name}</td>
+                                        <td id='item-display'>{item.category}</td>
+                                        <td id='item-display'>{item.quantity}</td>
+                                        <td id='item-display'>${item.price}</td>
+                                        <td id='action-display'>
                                             {viewMode === 'active' ? (
                                                 <>
                                                     <button onClick={() => openEditModal(item)} style={{ cursor: 'pointer', background: 'none', border: 'none', color: '#007bff' }}><FiEdit2 size={18} /></button>
@@ -210,17 +232,40 @@ const Inventory: React.FC = () => {
                                 <option value="Health&Beauty">Health&Beauty</option>
                                 <option value="Clothing">Clothing</option>
                                 <option value="School Supplies">School Supplies</option>
+                                <option value="Pet Care">Pet Care</option>
                             </select>
                             
-                            <input type="number" placeholder="Quantity" required value={formData.quantity} onChange={e => setFormData({...formData, quantity: Number(e.target.value)})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                            <input
+                                type="text"
+                                placeholder="Quantity"
+                                required
+                                value={formData.quantity}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (/^\d+$/.test(value)) {
+                                    setFormData({ ...formData, quantity: value });
+                                    }
+                                }}
+                                />
                             
-                            <input type="number" placeholder="Price" step="0.01" required value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                            <input
+                                type="text"
+                                placeholder="Price"
+                                required
+                                value={formData.price}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (/^\d*\.?\d*$/.test(value)) {
+                                    setFormData({ ...formData, price: value });
+                                    }
+                                }}
+                                />
                             
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                                <button type="submit" style={{ flex: 1, padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                            <div>
+                                <button type="submit">
                                     {isEditing ? "Update Item" : "Save Item"}
                                 </button>
-                                <button type="button" onClick={() => setIsModalOpen(false)} style={{ flex: 1, padding: '10px', backgroundColor: '#ccc', color: 'black', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                                <button type="button" onClick={() => setIsModalOpen(false)}>
                                     Cancel
                                 </button>
                             </div>
