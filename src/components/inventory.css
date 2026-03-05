@@ -127,10 +127,8 @@
 .content-container{
     display: flex;
     width: 100%;
-    height: auto;
-    max-height: 480px;
+    height: 79vh;
     overflow-y: auto;
-    max-height:fill-available;
     background-color: white;
     margin-top: 25px;
     border-radius: 8px;
@@ -143,6 +141,13 @@
     border-collapse: collapse;
     background-color: white;
     border-radius: 8px;
+}
+
+#inv-table th{
+    background-color: #e6e6e6;
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 #table-header-group{
