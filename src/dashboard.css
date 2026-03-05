@@ -1,92 +1,95 @@
+/* ===== PAGE LAYOUT ===== */
 .dashboard-page {
-  display: flex;
-  flex-direction: column;   /* stack children vertically */
-  font-family: Arial, sans-serif;
-  background-color: white;
-  height: 100vh;
-  width: 100vw;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+    font-family: Arial, sans-serif;
+    background-color: #f3f4f6;
 }
 
-/* ===== TOP BAR ===== */
-.dashboard-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50px;
-  background-color: #3B82F6;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  font-size: 11px;
-}
-
-.dashboard-body {
-  display: flex;
-  margin-top: 50px; /* push below fixed top bar */
-  flex: 1;
-}
-
-/* ===== BELOW TOP BAR CONTAINER ===== */
+/* ===== SIDEBAR ===== */
 .dashboard-navbar {
-  width: 250px;
-  background-color: #1e1c2a;;
-  display: flex;
-  flex-direction: column;
-  padding: 0px;
-  box-shadow: 2px 0 5px #0000001a;
-  align-items: center;
+    width: 240px;
+    background-color: #1f2937;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+/* ===== HEADER ===== */
+.navbarheader {
+    display: flex;
+    background-color: #171e29;
+    height: 10vh;
+    width: 100%;
+    font-size: 25px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== NAV SECTIONS ===== */
+.subsections {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== NAV BUTTONS ===== */
 .nav-button {
-  margin: 0px;
-  padding: 18px;
-  border: none;
-  cursor: pointer;
-  border-radius: 0px;
-  width: 100%;
-  background-color: transparent;
-  color: white;
-  text-align: left;
+    margin: 0px;
+    padding: 20px 10px;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s ease;
 }
 
 .nav-button:hover {
-  background-color: #4e73a0;
+    background-color: #4e73a0;
 }
 
-.profile-button{
-  margin: 0px;
-  padding: 18px;
-  border: none;
-  cursor: pointer;
-  border-radius: 0px;
-  width: 100%;
-  background-color: #171e29;
-  color: white;
-  text-align: left;
+/* ===== PROFILE SECTION (BOTTOM) ===== */
+.profile-container {
+    width: 100%;
+    margin-top: auto;   /* pushes it to bottom */
 }
+
+/* ===== PROFILE BUTTON ===== */
+.profile-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 10vh;
+    width: 100%;
+    padding: 8px 10px;
+    background-color: #171e29;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
 .profile-button:hover {
-  background-color: #4e73a0;
+    background-color: #4e73a0;
 }
 
-/* ===== CONTENT AREA ===== */
+/* ===== PROFILE AVATAR ===== */
+.profile-avatar {
+    width: 32px;
+    height: 32px;
+    background-color: #9ca3af;
+    border-radius: 50%;
+}
+
+/* ===== MAIN CONTENT ===== */
 .dashboard-content {
-  padding: 25px;
-  flex: 1;
-  background-color: lightgray;
-  justify-content: center;
-  align-items: center;
-}
-
-.main-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 96%;
-  height: 90%;
+    flex: 1;
+    background-color: #bcbcbc;
+    padding: 30px;
+    overflow-y: auto;
 }

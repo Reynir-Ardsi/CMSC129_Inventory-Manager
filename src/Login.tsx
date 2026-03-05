@@ -19,7 +19,7 @@ const Login: React.FC = () => {
         // After 1.5 seconds, hide overlay and navigate
         setTimeout(() => {
             setMoveToDashboard(false);
-            navigate("/sample");
+            navigate("/dashboard");
         }, 1500);
     };
 
