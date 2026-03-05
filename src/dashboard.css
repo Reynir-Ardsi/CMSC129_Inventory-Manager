@@ -1,4 +1,3 @@
-/* ===== PAGE LAYOUT ===== */
 .dashboard-page {
     display: flex;
     flex-direction: row;
@@ -8,7 +7,6 @@
     background-color: #f3f4f6;
 }
 
-/* ===== SIDEBAR ===== */
 .dashboard-navbar {
     width: 240px;
     background-color: #1f2937;
@@ -18,7 +16,6 @@
     align-items: center;
 }
 
-/* ===== HEADER ===== */
 .navbarheader {
     display: flex;
     background-color: #171e29;
@@ -30,14 +27,12 @@
     justify-content: center;
 }
 
-/* ===== NAV SECTIONS ===== */
 .subsections {
     width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-/* ===== NAV BUTTONS ===== */
 .nav-button {
     margin: 0px;
     padding: 20px 10px;
@@ -53,13 +48,11 @@
     background-color: #4e73a0;
 }
 
-/* ===== PROFILE SECTION (BOTTOM) ===== */
 .profile-container {
     width: 100%;
-    margin-top: auto;   /* pushes it to bottom */
+    margin-top: auto;
 }
 
-/* ===== PROFILE BUTTON ===== */
 .profile-button {
     display: flex;
     align-items: center;
@@ -78,7 +71,6 @@
     background-color: #4e73a0;
 }
 
-/* ===== PROFILE AVATAR ===== */
 .profile-avatar {
     width: 32px;
     height: 32px;
@@ -86,7 +78,6 @@
     border-radius: 50%;
 }
 
-/* ===== MAIN CONTENT ===== */
 .dashboard-content {
     flex: 1;
     background-color: #bcbcbc;

@@ -18,7 +18,7 @@ const Transactions: React.FC = () => {
                         <option value="option3">Supplier</option>
                     </select>
 
-                    
+
                     <select className="sort-button">
                         <option value="default">Default Sort</option>
                         <option value="name-asc">Name (A-Z)</option>
@@ -28,7 +28,7 @@ const Transactions: React.FC = () => {
                         <option value="price-asc">Price (Low to High)</option>
                         <option value="price-desc">Price (High to Low)</option>
                     </select>
-                    
+
                 </div>
 
                 <button id="additem"><FiPlus /></button>

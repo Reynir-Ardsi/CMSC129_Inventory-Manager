@@ -63,7 +63,7 @@ input{
   border: 0px;
   background: rgb(231, 231, 231);
   font-size: 20px;
-} 
+}
 
 input::placeholder{
   color: grey;
@@ -173,8 +173,6 @@ input:hover {
   border-radius: 10px;
 }
 
-/* Modal Styles */
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -235,5 +233,3 @@ input:hover {
     transform: scale(1);
   }
 }
-
-

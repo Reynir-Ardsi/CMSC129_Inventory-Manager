@@ -49,7 +49,7 @@ app.post('/api/users', async (req, res) => {
         writeResults.forEach((result, index) => {
             if (result.status === 'rejected') {
                 const dbName = index === 0 ? 'Primary' : 'Secondary';
-                console.error(`🚨 ${dbName} DB User Write Failed:`, result.reason);
+                console.error(`${dbName} DB User Write Failed:`, result.reason);
             }
         });
 
@@ -57,6 +57,47 @@ app.post('/api/users', async (req, res) => {
     } catch (error) {
         console.error("Critical Server Error in POST /api/users:", error);
         res.status(500).json({ error: 'Failed to create redundant user data' });
+    }
+});
+
+app.get('/api/users/:uid', async (req, res) => {
+    try {
+        const { uid } = req.params;
+        let doc = await primaryDb.collection('users').doc(uid).get();
+
+        if (!doc.exists) {
+            doc = await secondaryDb.collection('users').doc(uid).get();
+        }
+
+        if (!doc.exists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json(doc.data());
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ error: 'Failed to fetch user data' });
+    }
+});
+
+app.put('/api/users/:uid', async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const { email, username } = req.body;
+
+        const updateData = {};
+        if (email) updateData.email = email;
+        if (username) updateData.username = username;
+
+        await Promise.allSettled([
+            primaryDb.collection('users').doc(uid).update(updateData),
+            secondaryDb.collection('users').doc(uid).update(updateData)
+        ]);
+
+        res.status(200).json({ message: 'User updated successfully' });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ error: 'Failed to update user data' });
     }
 });
 

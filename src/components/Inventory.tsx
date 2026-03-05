@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react';
 import './inventory.css';
 import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiRefreshCcw, FiAlertOctagon } from "react-icons/fi";
 
-// Define the Item type expected from the database
 interface Item {
     id: string;
     name: string;
@@ -14,31 +13,24 @@ interface Item {
 const API_URL = 'http://localhost:5000/api/inventory';
 
 const Inventory: React.FC = () => {
-    // --- BACKEND LOGIC STATES ---
     const [items, setItems] = useState<Item[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({ id: '', name: '', category: 'Electronics', quantity: '', price: '' });
     const [isEditing, setIsEditing] = useState(false);
-    
-    // Toggle between Active inventory and Soft-Deleted items
+
     const [viewMode, setViewMode] = useState<'active' | 'deleted'>('active');
 
-    // --- SEARCH, FILTER, & SORT STATES ---
-    const [searchInput, setSearchInput] = useState(''); 
-    const [searchQuery, setSearchQuery] = useState(''); 
+    const [searchInput, setSearchInput] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [sortOption, setSortOption] = useState('default');
 
-    // --- CUSTOM DELETE MODAL STATE ---
     const [deleteModalConfig, setDeleteModalConfig] = useState<{isOpen: boolean, id: string, type: 'soft' | 'hard'}>({
-        isOpen: false, 
-        id: '', 
+        isOpen: false,
+        id: '',
         type: 'soft'
     });
 
-    // --- CRUD OPERATIONS ---
-    
-    // READ: Fetch Items from the server
     const fetchItems = async () => {
         try {
             const query = viewMode === 'deleted' ? '?deleted=true' : '';
@@ -54,10 +46,9 @@ const Inventory: React.FC = () => {
         fetchItems();
     }, [viewMode]);
 
-    // CREATE / UPDATE
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         try {
             const payload = {
                 ...formData,
@@ -87,17 +78,14 @@ const Inventory: React.FC = () => {
         }
     };
 
-    // SOFT DELETE: Open Custom Modal instead of window.confirm
     const handleSoftDelete = (id: string) => {
         setDeleteModalConfig({ isOpen: true, id, type: 'soft' });
     };
 
-    // HARD DELETE: Open Custom Modal instead of window.confirm
     const handleHardDelete = (id: string) => {
         setDeleteModalConfig({ isOpen: true, id, type: 'hard' });
     };
 
-    // ACTUAL DELETE EXECUTION (Triggered by the custom modal)
     const executeDelete = async () => {
         const { id, type } = deleteModalConfig;
         try {
@@ -106,14 +94,13 @@ const Inventory: React.FC = () => {
             } else {
                 await fetch(`${API_URL}/${id}/hard`, { method: 'DELETE' });
             }
-            fetchItems(); // Refresh the list
-            setDeleteModalConfig({ isOpen: false, id: '', type: 'soft' }); // Close modal
+            fetchItems();
+            setDeleteModalConfig({ isOpen: false, id: '', type: 'soft' });
         } catch (error) {
             console.error(`Error ${type} deleting item:`, error);
         }
     };
 
-    // RESTORE
     const handleRestore = async (id: string) => {
         try {
             await fetch(`${API_URL}/${id}/restore`, { method: 'PUT' });
@@ -123,7 +110,6 @@ const Inventory: React.FC = () => {
         }
     };
 
-    // --- MODAL CONTROLS ---
     const openEditModal = (item: Item) => {
         setFormData({
             id: item.id,
@@ -142,12 +128,11 @@ const Inventory: React.FC = () => {
         setIsModalOpen(true);
     };
 
-    // --- APPLY SEARCH, FILTER, AND SORT ---
     const processedItems = useMemo(() => {
         let result = [...items];
 
         if (searchQuery) {
-            result = result.filter(item => 
+            result = result.filter(item =>
                 item.name.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
@@ -182,8 +167,8 @@ const Inventory: React.FC = () => {
             <div id="invtop">
                 <div className='nav-wrapper'>
                     <div className="search-wrapper">
-                        <input 
-                            id="search-bar" 
+                        <input
+                            id="search-bar"
                             placeholder="Search"
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
@@ -194,7 +179,7 @@ const Inventory: React.FC = () => {
                         </button>
                     </div>
 
-                    <select 
+                    <select
                         className="sort-button"
                         value={selectedCategory}
                         onChange={(e) => setSelectedCategory(e.target.value)}
@@ -209,7 +194,7 @@ const Inventory: React.FC = () => {
                         <option value="Pet Care">Pet Care</option>
                     </select>
 
-                    <select 
+                    <select
                         className="sort-button"
                         value={sortOption}
                         onChange={(e) => setSortOption(e.target.value)}
@@ -276,16 +261,15 @@ const Inventory: React.FC = () => {
                 </div>
             </div>
 
-            {/* MODAL FOR ADD/EDIT */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h2 id='dashboard-modal-header'>{isEditing ? "Edit Item" : "Add New Item"}</h2>
                         <form onSubmit={handleSubmit}>
-                            
+
                             <text id='form-header'>Item Name:</text>
                             <input id='modal-input' type="text" placeholder="e.g. Speaker" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
-                            
+
                             <text id='form-header'>Category:</text>
                             <div id='category-div'>
                             <select id='item-category' value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
@@ -298,7 +282,7 @@ const Inventory: React.FC = () => {
                                 <option value="Pet Care">Pet Care</option>
                             </select>
                             </div>
-                            
+
                             <text id='form-header'>Quantity:</text>
                             <input
                                 id='modal-input'
@@ -327,7 +311,7 @@ const Inventory: React.FC = () => {
                                     }
                                 }}
                                 />
-                            
+
                             <div id='modal-button-div'>
                                 <button id='modal-button' type="submit">
                                     {isEditing ? "Update Item" : "Save Item"}
@@ -341,24 +325,23 @@ const Inventory: React.FC = () => {
                 </div>
             )}
 
-            {/* CUSTOM DELETE CONFIRMATION MODAL */}
             {deleteModalConfig.isOpen && (
                 <div className="modal-overlay" onClick={() => setDeleteModalConfig({ isOpen: false, id: '', type: 'soft' })}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h2 id='dashboard-modal-header' style={{ color: deleteModalConfig.type === 'hard' ? 'red' : 'inherit' }}>
                             {deleteModalConfig.type === 'hard' ? 'Permanent Delete' : 'Move to Recycle Bin'}
                         </h2>
-                        
+
                         <p style={{ margin: '20px 0', fontSize: '16px', color: '#333' }}>
-                            {deleteModalConfig.type === 'hard' 
-                                ? "WARNING: This will permanently delete the item from the database. This action cannot be undone. Continue?" 
+                            {deleteModalConfig.type === 'hard'
+                                ? "WARNING: This will permanently delete the item from the database. This action cannot be undone. Continue?"
                                 : "Are you sure you want to move this item to the recycle bin?"}
                         </p>
-                        
+
                         <div id='modal-button-div'>
-                            <button 
-                                id='modal-button' 
-                                style={{ backgroundColor: deleteModalConfig.type === 'hard' ? '#dc3545' : '#ffc107', color: deleteModalConfig.type === 'hard' ? 'white' : 'black', border: 'none' }} 
+                            <button
+                                id='modal-button'
+                                style={{ backgroundColor: deleteModalConfig.type === 'hard' ? '#dc3545' : '#ffc107', color: deleteModalConfig.type === 'hard' ? 'white' : 'black', border: 'none' }}
                                 onClick={executeDelete}
                             >
                                 {deleteModalConfig.type === 'hard' ? 'Yes, Delete' : 'Yes, Move'}
