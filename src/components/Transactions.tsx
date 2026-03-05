@@ -46,6 +46,7 @@ const Transactions: React.FC = () => {
                                 <th id='table-headers'>Actions</th>
                             </tr>
                         </thead>
+                            <tbody><tr><td id='td' colSpan={5}>No items found.</td></tr></tbody>
                         {/* <tbody>
                             {items.length === 0 ? (
                                 <tr><td id='td' colSpan={5}>No items found.</td></tr>

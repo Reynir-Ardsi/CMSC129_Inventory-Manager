@@ -165,7 +165,7 @@
     background: #1f2937;
     border-radius: 10px;
 }
-
+w
 /* Hover effect */
 .content-container::-webkit-scrollbar-thumb:hover {
     background: #999;
@@ -191,3 +191,79 @@
     gap: 10px;
 }
 
+.modal-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 28%;
+    height : fit-content;
+    gap: 15px;
+}
+
+#dashboard-modal-header{
+    margin: 0px;
+    text-align: center;
+}
+
+#modal-input{
+    margin-top: 0px;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    margin-bottom: 10px 0px;
+}
+
+#category-div{
+    display: flex;
+    justify-content: flex-start;
+    margin: 0px 20px;
+    gap: 5px;
+}
+
+#form-header{
+    display: flex;
+    align-items: flex-start;
+    margin: 0px 20px;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+#item-category{
+    background-color: #e7e7e7;
+    text-align: left;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    margin: 0px;
+    justify-content: flex-start;
+}
+
+#item-category:hover{
+    background-color: #d4d4d4;
+}
+
+#modal-button-div{
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 30px;
+}
+
+#modal-button{
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: #4e73a0;
+    color: white;
+    margin-top: 20px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#modal-button:hover{
+    background-color: #2e59d9;
+}
