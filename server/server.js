@@ -26,6 +26,40 @@ const secondaryApp = admin.initializeApp({
 const primaryDb = primaryApp.firestore();
 const secondaryDb = secondaryApp.firestore();
 
+app.post('/api/users', async (req, res) => {
+    try {
+        const { uid, email, username } = req.body;
+
+        if (!uid || !email) {
+            return res.status(400).json({ error: 'Missing required user fields' });
+        }
+
+        const newUser = {
+            uid,
+            email,
+            username: username || '',
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        const writeResults = await Promise.allSettled([
+            primaryDb.collection('users').doc(uid).set(newUser),
+            secondaryDb.collection('users').doc(uid).set(newUser)
+        ]);
+
+        writeResults.forEach((result, index) => {
+            if (result.status === 'rejected') {
+                const dbName = index === 0 ? 'Primary' : 'Secondary';
+                console.error(`🚨 ${dbName} DB User Write Failed:`, result.reason);
+            }
+        });
+
+        res.status(201).json({ message: 'User redundant backup successful', user: newUser });
+    } catch (error) {
+        console.error("Critical Server Error in POST /api/users:", error);
+        res.status(500).json({ error: 'Failed to create redundant user data' });
+    }
+});
+
 app.post('/api/inventory', async (req, res) => {
     try {
         const { name, category, quantity, price } = req.body;
