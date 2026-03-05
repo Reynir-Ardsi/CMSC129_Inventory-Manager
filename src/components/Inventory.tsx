@@ -24,14 +24,21 @@ const Inventory: React.FC = () => {
     const [viewMode, setViewMode] = useState<'active' | 'deleted'>('active');
 
     // --- SEARCH, FILTER, & SORT STATES ---
-    const [searchInput, setSearchInput] = useState(''); // Text currently in the search bar
-    const [searchQuery, setSearchQuery] = useState(''); // The search term actually applied
+    const [searchInput, setSearchInput] = useState(''); 
+    const [searchQuery, setSearchQuery] = useState(''); 
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [sortOption, setSortOption] = useState('default');
 
+    // --- CUSTOM DELETE MODAL STATE ---
+    const [deleteModalConfig, setDeleteModalConfig] = useState<{isOpen: boolean, id: string, type: 'soft' | 'hard'}>({
+        isOpen: false, 
+        id: '', 
+        type: 'soft'
+    });
+
     // --- CRUD OPERATIONS ---
     
-    // READ: Fetch Items from the server (handles both active and soft-deleted)
+    // READ: Fetch Items from the server
     const fetchItems = async () => {
         try {
             const query = viewMode === 'deleted' ? '?deleted=true' : '';
@@ -47,7 +54,7 @@ const Inventory: React.FC = () => {
         fetchItems();
     }, [viewMode]);
 
-    // CREATE / UPDATE: Submit form data to server
+    // CREATE / UPDATE
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -80,41 +87,39 @@ const Inventory: React.FC = () => {
         }
     };
 
-    // SOFT DELETE: Send soft-delete request to server
-    const handleSoftDelete = async (id: string) => {
-        if (!window.confirm("Move this item to the recycle bin?")) return;
+    // SOFT DELETE: Open Custom Modal instead of window.confirm
+    const handleSoftDelete = (id: string) => {
+        setDeleteModalConfig({ isOpen: true, id, type: 'soft' });
+    };
+
+    // HARD DELETE: Open Custom Modal instead of window.confirm
+    const handleHardDelete = (id: string) => {
+        setDeleteModalConfig({ isOpen: true, id, type: 'hard' });
+    };
+
+    // ACTUAL DELETE EXECUTION (Triggered by the custom modal)
+    const executeDelete = async () => {
+        const { id, type } = deleteModalConfig;
         try {
-            await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-            });
+            if (type === 'soft') {
+                await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+            } else {
+                await fetch(`${API_URL}/${id}/hard`, { method: 'DELETE' });
+            }
             fetchItems(); // Refresh the list
+            setDeleteModalConfig({ isOpen: false, id: '', type: 'soft' }); // Close modal
         } catch (error) {
-            console.error("Error deleting item:", error);
+            console.error(`Error ${type} deleting item:`, error);
         }
     };
 
-    // RESTORE: Recover a soft-deleted item
+    // RESTORE
     const handleRestore = async (id: string) => {
         try {
-            await fetch(`${API_URL}/${id}/restore`, {
-                method: 'PUT'
-            });
+            await fetch(`${API_URL}/${id}/restore`, { method: 'PUT' });
             fetchItems();
         } catch (error) {
             console.error("Error restoring item:", error);
-        }
-    };
-
-    // HARD DELETE: Permanently remove item from the database
-    const handleHardDelete = async (id: string) => {
-        if (!window.confirm("WARNING: This will permanently delete the item. Continue?")) return;
-        try {
-            await fetch(`${API_URL}/${id}/hard`, {
-                method: 'DELETE'
-            });
-            fetchItems(); // Refresh the list
-        } catch (error) {
-            console.error("Error hard deleting item:", error);
         }
     };
 
@@ -141,42 +146,31 @@ const Inventory: React.FC = () => {
     const processedItems = useMemo(() => {
         let result = [...items];
 
-        // 1. Filter by Search Query (Name)
         if (searchQuery) {
             result = result.filter(item => 
                 item.name.toLowerCase().includes(searchQuery.toLowerCase())
             );
         }
 
-        // 2. Filter by Category
         if (selectedCategory !== 'All') {
             result = result.filter(item => item.category === selectedCategory);
         }
 
-        // 3. Apply Sorting
         result.sort((a, b) => {
             switch (sortOption) {
-                case 'name-asc':
-                    return a.name.localeCompare(b.name);
-                case 'name-desc':
-                    return b.name.localeCompare(a.name);
-                case 'quantity-asc':
-                    return a.quantity - b.quantity;
-                case 'quantity-desc':
-                    return b.quantity - a.quantity;
-                case 'price-asc':
-                    return a.price - b.price;
-                case 'price-desc':
-                    return b.price - a.price;
-                default:
-                    return 0; // 'default'
+                case 'name-asc': return a.name.localeCompare(b.name);
+                case 'name-desc': return b.name.localeCompare(a.name);
+                case 'quantity-asc': return a.quantity - b.quantity;
+                case 'quantity-desc': return b.quantity - a.quantity;
+                case 'price-asc': return a.price - b.price;
+                case 'price-desc': return b.price - a.price;
+                default: return 0;
             }
         });
 
         return result;
     }, [items, searchQuery, selectedCategory, sortOption]);
 
-    // Handle Search trigger on Enter key
     const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             setSearchQuery(searchInput);
@@ -235,7 +229,6 @@ const Inventory: React.FC = () => {
                     </button>
                 </div>
 
-                {/* Only show Add button in active view */}
                 {viewMode === 'active' && <button id="additem" onClick={openAddModal}><FiPlus /></button>}
             </div>
 
@@ -252,7 +245,6 @@ const Inventory: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {/* Render using processedItems instead of raw items */}
                             {processedItems.length === 0 ? (
                                 <tr><td id='td' colSpan={5}>No items found.</td></tr>
                             ) : (
@@ -345,6 +337,36 @@ const Inventory: React.FC = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* CUSTOM DELETE CONFIRMATION MODAL */}
+            {deleteModalConfig.isOpen && (
+                <div className="modal-overlay" onClick={() => setDeleteModalConfig({ isOpen: false, id: '', type: 'soft' })}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h2 id='dashboard-modal-header' style={{ color: deleteModalConfig.type === 'hard' ? 'red' : 'inherit' }}>
+                            {deleteModalConfig.type === 'hard' ? 'Permanent Delete' : 'Move to Recycle Bin'}
+                        </h2>
+                        
+                        <p style={{ margin: '20px 0', fontSize: '16px', color: '#333' }}>
+                            {deleteModalConfig.type === 'hard' 
+                                ? "WARNING: This will permanently delete the item from the database. This action cannot be undone. Continue?" 
+                                : "Are you sure you want to move this item to the recycle bin?"}
+                        </p>
+                        
+                        <div id='modal-button-div'>
+                            <button 
+                                id='modal-button' 
+                                style={{ backgroundColor: deleteModalConfig.type === 'hard' ? '#dc3545' : '#ffc107', color: deleteModalConfig.type === 'hard' ? 'white' : 'black', border: 'none' }} 
+                                onClick={executeDelete}
+                            >
+                                {deleteModalConfig.type === 'hard' ? 'Yes, Delete' : 'Yes, Move'}
+                            </button>
+                            <button id='modal-button' type="button" onClick={() => setDeleteModalConfig({ isOpen: false, id: '', type: 'soft' })}>
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
