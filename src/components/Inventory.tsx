@@ -218,14 +218,14 @@ const Inventory: React.FC = () => {
 
             {/* MODAL FOR ADD/EDIT */}
             {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', width: '400px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)} /*style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}*/>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()} /*style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', width: '400px', display: 'flex', flexDirection: 'column', gap: '15px' }}*/>
                         <h2 style={{ margin: 0 }}>{isEditing ? "Edit Item" : "Add New Item"}</h2>
-                        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <form onSubmit={handleSubmit} /*style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}*/>
                             
-                            <input type="text" placeholder="Item Name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+                            <input type="text" placeholder="Item Name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*//>
                             
-                            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}>
+                            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*/>
                                 <option value="Electronics">Electronics</option>
                                 <option value="Sports">Sports</option>
                                 <option value="Food">Food</option>
