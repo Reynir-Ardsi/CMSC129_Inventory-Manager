@@ -90,8 +90,8 @@ const Inventory: React.FC = () => {
     // RESTORE: Recover a soft-deleted item
     const handleRestore = async (id: string) => {
         try {
-            await fetch(`${API_URL}/${id}/restore`, { 
-                method: 'PUT' 
+            await fetch(`${API_URL}/${id}/restore`, {
+                method: 'PUT'
             });
             fetchItems();
         } catch (error) {
@@ -134,7 +134,7 @@ const Inventory: React.FC = () => {
     return(
         <div>
             <div id="invtop">
-                <div className='nav-wrapper' style={{ display: 'flex', gap: '15px' }}>
+                <div className='nav-wrapper'>
                     <div className="search-wrapper">
                         <input id="search-bar" placeholder="Search"/>
                         <button id="searchbutton"><FiSearch/></button>
