@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { IoPerson } from "react-icons/io5";
 import './dashboard.css';
 import Inventory from "./components/Inventory";
 import Transactions from "./components/Transactions";
@@ -23,7 +24,9 @@ const Dashboard: React.FC = () => {
 
                 <div className="profile-container">
                     <button className="profile-button" onClick={() => setShowProfile(true)}>
-                        <div className="profile-avatar"></div>
+                        <div className="profile-avatar">
+                            <IoPerson size={24} color="#fff" style={{ marginTop: '3px'}} />
+                        </div>
                         <span>Rainier RJ Espinal</span>
                     </button>
                 </div>
@@ -37,14 +40,18 @@ const Dashboard: React.FC = () => {
                 <div className="modal-overlay" onClick={() => setShowProfile(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                     <form>
-                        <h2>Profile</h2> 
-                        <text id='form-header'>Email:</text>
-                        <input id='modal-input' type="email" placeholder="rjespinal6404@gmail.com" />
-                        <text id='form-header'>Password:</text>
-                        <input id='modal-input' type="password"/>
-                        <text id='form-header'>Confirm Password:</text>
-                        <input id='modal-input' type="password"/>
-                        <button id='modal-button'>Update</button>
+                        <div id="form-div">
+                            <h2>Profile</h2>
+                            <text id='form-header'>Email:</text>
+                            <input id='profile-modal-input' type="email" placeholder="rjespinal6404@gmail.com" />
+                            <text id='form-header'>Password:</text>
+                            <input id='profile-modal-input' type="password" placeholder='••••••••'/>
+                            <text id='form-header'>Confirm Password:</text>
+                            <input id='profile-modal-input' type="password" placeholder='••••••••'/>
+                                <div id='profile-modal-button-container'>
+                                    <button id='profile-modal-button'>Update</button>
+                                </div>
+                        </div>
                     </form>
                     </div>
                 </div>

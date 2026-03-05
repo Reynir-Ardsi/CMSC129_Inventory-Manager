@@ -93,3 +93,37 @@
     padding: 30px;
     overflow-y: auto;
 }
+
+#form-div{
+    display: flex;
+    flex-direction: column;
+}
+
+#profile-modal-input{
+    width: auto;
+    margin-top: 0px;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    margin-bottom: 10px 0px;
+}
+
+#profile-modal-button-container{
+    display: flex;
+    justify-content: center;
+}
+
+#profile-modal-button{
+    display: flex;
+    justify-content: center;
+    width: fit-content;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background-color: #4e73a0;
+    color: white;
+    margin-top: 20px;
+    font-size: 15px;
+    cursor: pointer;
+}
