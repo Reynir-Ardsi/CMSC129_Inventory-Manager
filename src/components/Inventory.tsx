@@ -220,12 +220,15 @@ const Inventory: React.FC = () => {
             {isModalOpen && (
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)} /*style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}*/>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()} /*style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', width: '400px', display: 'flex', flexDirection: 'column', gap: '15px' }}*/>
-                        <h2 style={{ margin: 0 }}>{isEditing ? "Edit Item" : "Add New Item"}</h2>
+                        <h2 id='dashboard-modal-header'>{isEditing ? "Edit Item" : "Add New Item"}</h2>
                         <form onSubmit={handleSubmit} /*style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}*/>
                             
-                            <input type="text" placeholder="Item Name" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*//>
+                            <text id='form-header'>Item Name:</text>
+                            <input id='modal-input' type="text" placeholder="e.g. Speaker" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*//>
                             
-                            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*/>
+                            <text id='form-header'>Category:</text>
+                            <div id='category-div'>
+                            <select id='item-category' value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*/>
                                 <option value="Electronics">Electronics</option>
                                 <option value="Sports">Sports</option>
                                 <option value="Food">Food</option>
@@ -234,10 +237,13 @@ const Inventory: React.FC = () => {
                                 <option value="School Supplies">School Supplies</option>
                                 <option value="Pet Care">Pet Care</option>
                             </select>
+                            </div>
                             
+                            <text id='form-header'>Quantity:</text>
                             <input
+                                id='modal-input'
                                 type="text"
-                                placeholder="Quantity"
+                                placeholder="0pcs"
                                 required
                                 value={formData.quantity}
                                 onChange={(e) => {
@@ -247,10 +253,11 @@ const Inventory: React.FC = () => {
                                     }
                                 }}
                                 />
-                            
+                            <text id='form-header'>Price:</text>
                             <input
+                                id='modal-input'
                                 type="text"
-                                placeholder="Price"
+                                placeholder="$0.0"
                                 required
                                 value={formData.price}
                                 onChange={(e) => {
@@ -261,11 +268,11 @@ const Inventory: React.FC = () => {
                                 }}
                                 />
                             
-                            <div>
-                                <button type="submit">
+                            <div id='modal-button-div'>
+                                <button id='modal-button' type="submit">
                                     {isEditing ? "Update Item" : "Save Item"}
                                 </button>
-                                <button type="button" onClick={() => setIsModalOpen(false)}>
+                                <button id='modal-button' type="button" onClick={() => setIsModalOpen(false)}>
                                     Cancel
                                 </button>
                             </div>

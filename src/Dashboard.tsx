@@ -37,11 +37,14 @@ const Dashboard: React.FC = () => {
                 <div className="modal-overlay" onClick={() => setShowProfile(false)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                     <form>
-                        <h2>Profile</h2>
-                        <input type="email" placeholder="Email" />
-                        <input type="password" placeholder="Password" />
-                        <input type="password" placeholder="Confirm Password" />
-                        <button id='register-button'>Update</button>
+                        <h2>Profile</h2> 
+                        <text id='form-header'>Email:</text>
+                        <input id='modal-input' type="email" placeholder="rjespinal6404@gmail.com" />
+                        <text id='form-header'>Password:</text>
+                        <input id='modal-input' type="password"/>
+                        <text id='form-header'>Confirm Password:</text>
+                        <input id='modal-input' type="password"/>
+                        <button id='modal-button'>Update</button>
                     </form>
                     </div>
                 </div>
