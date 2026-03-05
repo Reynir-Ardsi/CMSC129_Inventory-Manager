@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import './inventory.css';
 import { FiSearch, FiPlus, FiEdit2, FiTrash2, FiRefreshCcw, FiAlertOctagon } from "react-icons/fi";
 
@@ -22,6 +22,12 @@ const Inventory: React.FC = () => {
     
     // Toggle between Active inventory and Soft-Deleted items
     const [viewMode, setViewMode] = useState<'active' | 'deleted'>('active');
+
+    // --- SEARCH, FILTER, & SORT STATES ---
+    const [searchInput, setSearchInput] = useState(''); // Text currently in the search bar
+    const [searchQuery, setSearchQuery] = useState(''); // The search term actually applied
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [sortOption, setSortOption] = useState('default');
 
     // --- CRUD OPERATIONS ---
     
@@ -48,7 +54,7 @@ const Inventory: React.FC = () => {
         try {
             const payload = {
                 ...formData,
-                quantity: formData.quantity,
+                quantity: parseInt(formData.quantity),
                 price: parseFloat(formData.price)
             };
 
@@ -131,16 +137,74 @@ const Inventory: React.FC = () => {
         setIsModalOpen(true);
     };
 
+    // --- APPLY SEARCH, FILTER, AND SORT ---
+    const processedItems = useMemo(() => {
+        let result = [...items];
+
+        // 1. Filter by Search Query (Name)
+        if (searchQuery) {
+            result = result.filter(item => 
+                item.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+        // 2. Filter by Category
+        if (selectedCategory !== 'All') {
+            result = result.filter(item => item.category === selectedCategory);
+        }
+
+        // 3. Apply Sorting
+        result.sort((a, b) => {
+            switch (sortOption) {
+                case 'name-asc':
+                    return a.name.localeCompare(b.name);
+                case 'name-desc':
+                    return b.name.localeCompare(a.name);
+                case 'quantity-asc':
+                    return a.quantity - b.quantity;
+                case 'quantity-desc':
+                    return b.quantity - a.quantity;
+                case 'price-asc':
+                    return a.price - b.price;
+                case 'price-desc':
+                    return b.price - a.price;
+                default:
+                    return 0; // 'default'
+            }
+        });
+
+        return result;
+    }, [items, searchQuery, selectedCategory, sortOption]);
+
+    // Handle Search trigger on Enter key
+    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            setSearchQuery(searchInput);
+        }
+    };
+
     return(
         <div>
             <div id="invtop">
                 <div className='nav-wrapper'>
                     <div className="search-wrapper">
-                        <input id="search-bar" placeholder="Search"/>
-                        <button id="searchbutton"><FiSearch/></button>
+                        <input 
+                            id="search-bar" 
+                            placeholder="Search"
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            onKeyDown={handleSearchKeyDown}
+                        />
+                        <button id="searchbutton" onClick={() => setSearchQuery(searchInput)}>
+                            <FiSearch/>
+                        </button>
                     </div>
 
-                    <select className="sort-button">
+                    <select 
+                        className="sort-button"
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
                         <option value="All">All Categories</option>
                         <option value="Electronics">Electronics</option>
                         <option value="Sports">Sports</option>
@@ -151,7 +215,11 @@ const Inventory: React.FC = () => {
                         <option value="Pet Care">Pet Care</option>
                     </select>
 
-                    <select className="sort-button">
+                    <select 
+                        className="sort-button"
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                    >
                         <option value="default">Default Sort</option>
                         <option value="name-asc">Name (A-Z)</option>
                         <option value="name-desc">Name (Z-A)</option>
@@ -160,7 +228,6 @@ const Inventory: React.FC = () => {
                         <option value="price-asc">Price (Low to High)</option>
                         <option value="price-desc">Price (High to Low)</option>
                     </select>
-
 
                     <button id={viewMode === 'active' ? 'recycle-active' : 'recycle-deleted'}
                         onClick={() => setViewMode(viewMode === 'active' ? 'deleted' : 'active')}>
@@ -185,10 +252,11 @@ const Inventory: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {items.length === 0 ? (
+                            {/* Render using processedItems instead of raw items */}
+                            {processedItems.length === 0 ? (
                                 <tr><td id='td' colSpan={5}>No items found.</td></tr>
                             ) : (
-                                items.map((item) => (
+                                processedItems.map((item) => (
                                     <tr key={item.id} style={{ borderBottom: '1px solid #eee' }}>
                                         <td id='item-display'>{item.name}</td>
                                         <td id='item-display'>{item.category}</td>
@@ -218,17 +286,17 @@ const Inventory: React.FC = () => {
 
             {/* MODAL FOR ADD/EDIT */}
             {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)} /*style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}*/>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()} /*style={{ backgroundColor: 'white', padding: '30px', borderRadius: '10px', width: '400px', display: 'flex', flexDirection: 'column', gap: '15px' }}*/>
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h2 id='dashboard-modal-header'>{isEditing ? "Edit Item" : "Add New Item"}</h2>
-                        <form onSubmit={handleSubmit} /*style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}*/>
+                        <form onSubmit={handleSubmit}>
                             
                             <text id='form-header'>Item Name:</text>
-                            <input id='modal-input' type="text" placeholder="e.g. Speaker" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*//>
+                            <input id='modal-input' type="text" placeholder="e.g. Speaker" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                             
                             <text id='form-header'>Category:</text>
                             <div id='category-div'>
-                            <select id='item-category' value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} /*style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}*/>
+                            <select id='item-category' value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
                                 <option value="Electronics">Electronics</option>
                                 <option value="Sports">Sports</option>
                                 <option value="Food">Food</option>

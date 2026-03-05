@@ -21,7 +21,6 @@
     border: none;
     border-radius: 15px;
     background-color: transparent;
-    /* background-color: #e6e6e6; */
     color: gray;
     font-size: 15px;
 }
@@ -36,7 +35,6 @@
     padding: 12px;
     font-size: 15px;
     background-color: transparent;
-    /* background-color: #e6e6e6; */
     color: gray;
     outline: none;
     border: none;
@@ -70,7 +68,6 @@
     background-color: white;
 }
 
-/* When viewing active inventory */
 #recycle-active {
     margin: 0px 8px;
     background-color: #ff4d4f;
@@ -84,7 +81,6 @@
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-/* When viewing deleted items */
 #recycle-deleted {
     margin: 0px 8px;
     background-color: #28a745;
@@ -149,24 +145,20 @@
     padding: 12px;
 }
 
-/* Scrollbar width */
 .content-container::-webkit-scrollbar {
     width: 10px;
 }
 
-/* Scrollbar track (background) */
 .content-container::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 0px 100px 100px 0px;
 }
 
-/* Scrollbar thumb (the draggable part) */
 .content-container::-webkit-scrollbar-thumb {
     background: #1f2937;
     border-radius: 10px;
 }
 w
-/* Hover effect */
 .content-container::-webkit-scrollbar-thumb:hover {
     background: #999;
 }
